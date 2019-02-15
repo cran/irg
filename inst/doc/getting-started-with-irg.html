@@ -12,7 +12,7 @@
 
 <meta name="author" content="Alec L. Robitaille" />
 
-<meta name="date" content="2019-01-02" />
+<meta name="date" content="2019-02-13" />
 
 <title>Getting started with irg</title>
 
@@ -2558,7 +2558,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Getting started with irg</h1>
 <h4 class="author"><em>Alec L. Robitaille</em></h4>
-<h4 class="date"><em>2019-01-02</em></h4>
+<h4 class="date"><em>2019-02-13</em></h4>
 
 
 <div id="TOC">
@@ -2627,45 +2627,45 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">2941</td>
+<td align="right">5</td>
 <td align="right">2002</td>
-<td align="right">133</td>
-<td align="right">-1021</td>
-<td align="right">2</td>
-</tr>
-<tr class="even">
-<td align="right">7652</td>
-<td align="right">2002</td>
-<td align="right">153</td>
-<td align="right">4251</td>
-<td align="right">3</td>
-</tr>
-<tr class="odd">
-<td align="right">7035</td>
-<td align="right">2002</td>
-<td align="right">147</td>
-<td align="right">308</td>
-<td align="right">3</td>
-</tr>
-<tr class="even">
-<td align="right">4368</td>
-<td align="right">2002</td>
-<td align="right">146</td>
-<td align="right">4802</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="right">5196</td>
-<td align="right">2002</td>
-<td align="right">159</td>
-<td align="right">6397</td>
+<td align="right">284</td>
+<td align="right">6495</td>
 <td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">12377</td>
+<td align="right">1</td>
 <td align="right">2002</td>
-<td align="right">149</td>
-<td align="right">5219</td>
+<td align="right">299</td>
+<td align="right">5517</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">2002</td>
+<td align="right">297</td>
+<td align="right">6352</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="right">2002</td>
+<td align="right">289</td>
+<td align="right">5725</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">4</td>
+<td align="right">2002</td>
+<td align="right">299</td>
+<td align="right">5990</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
+<td align="right">2002</td>
+<td align="right">299</td>
+<td align="right">5950</td>
 <td align="right">1</td>
 </tr>
 </tbody>
@@ -2692,8 +2692,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </div>
 <div id="workflow" class="section level2">
 <h2>Workflow</h2>
-<div id="htmlwidget-948f7d9280753485a170" style="width:700px;height:600px;" class="grViz html-widget"></div>
-<script type="application/json" data-for="htmlwidget-948f7d9280753485a170">{"x":{"diagram":"\n\tdigraph irg_functions  {\n\tgraph [rankdir=LR, compound=TRUE, fontsize = 28]\n\n\tnode[shape=none, fontsize=28]\n\n\tsubgraph cluster_filt{\n\tlabel= \"1)\"; labeljust=\"l\";\n\tFiltering -> filter_ndvi [dir=none]\n\tfilter_ndvi -> filter_qa [dir=none]\n\tfilter_ndvi -> filter_winter [dir=none]\n  filter_ndvi -> filter_roll [dir=none]\n  filter_ndvi -> filter_top [dir=none]\n\n\tfilter_top -> filter_roll -> filter_winter -> filter_qa [dir=back]\n\t{rank=same; filter_qa; filter_winter; filter_roll; filter_top}\n\t}\n\n\tsubgraph cluster_scal{\n  label= \"2)\" labeljust=\"l\";\n\n\tScaling -> scale_doy [dir=none]\n\tScaling -> scale_ndvi [dir=none]\n\t}\n\n\tsubgraph cluster_mod{\n  label= \"3)\" labeljust=\"l\";\n\n\tModeling -> model_start [dir=none]\n\tModeling -> model_params [dir=none]\n\tModeling -> model_ndvi [dir=none]\n\n\tmodel_ndvi -> model_params -> model_start [dir=back]\n\t{rank=same; model_ndvi; model_params; model_start}\n\t}\n\n\tsubgraph cluster_irg{\n  label= \"4)\" labeljust=\"l\";\n\n\tIRG -> calc_irg [dir=none]\n\t}\n\n  Filtering -> Scaling -> Modeling -> IRG\n\t\n\t# irg -> Filtering\n\t# irg -> Scaling\n\t# irg -> Modeling\n\t# irg -> IRG\n\n\t}\n\t","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-885a77871621b8954660" style="width:700px;height:600px;" class="grViz html-widget"></div>
+<script type="application/json" data-for="htmlwidget-885a77871621b8954660">{"x":{"diagram":"\n\tdigraph irg_functions  {\n\tgraph [rankdir=LR, compound=TRUE, fontsize = 28]\n\n\tnode[shape=none, fontsize=28]\n\n\tsubgraph cluster_filt{\n\tlabel= \"1)\"; labeljust=\"l\";\n\tFiltering -> filter_ndvi [dir=none]\n\tfilter_ndvi -> filter_qa [dir=none]\n\tfilter_ndvi -> filter_winter [dir=none]\n  filter_ndvi -> filter_roll [dir=none]\n  filter_ndvi -> filter_top [dir=none]\n\n\tfilter_top -> filter_roll -> filter_winter -> filter_qa [dir=back]\n\t{rank=same; filter_qa; filter_winter; filter_roll; filter_top}\n\t}\n\n\tsubgraph cluster_scal{\n  label= \"2)\" labeljust=\"l\";\n\n\tScaling -> scale_doy [dir=none]\n\tScaling -> scale_ndvi [dir=none]\n\t}\n\n\tsubgraph cluster_mod{\n  label= \"3)\" labeljust=\"l\";\n\n\tModeling -> model_start [dir=none]\n\tModeling -> model_params [dir=none]\n\tModeling -> model_ndvi [dir=none]\n\n\tmodel_ndvi -> model_params -> model_start [dir=back]\n\t{rank=same; model_ndvi; model_params; model_start}\n\t}\n\n\tsubgraph cluster_irg{\n  label= \"4)\" labeljust=\"l\";\n\n\tIRG -> calc_irg [dir=none]\n\t}\n\n  Filtering -> Scaling -> Modeling -> IRG\n\t\n\t# irg -> Filtering\n\t# irg -> Scaling\n\t# irg -> Modeling\n\t# irg -> IRG\n\n\t}\n\t","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 <p>There are 5 filtering functions, 2 scaling functions, 3 modeling functions and 2 IRG functions.</p>
 <p>The <code>irg::irg</code> function is a wrapper for all steps - filtering, scaling, modeling and calculating IRG in one step. At this point, only defaults. Here’s 5 rows from the result.</p>
 <p>For options, head to the steps below.</p>
@@ -2712,35 +2712,35 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">7035</td>
+<td align="right">2</td>
 <td align="right">2003</td>
 <td align="right">0.4000000</td>
 <td align="right">0.1504764</td>
 <td align="right">0.5111129</td>
 </tr>
 <tr class="even">
-<td align="right">7035</td>
+<td align="right">2</td>
 <td align="right">2003</td>
 <td align="right">0.4027397</td>
 <td align="right">0.1568717</td>
 <td align="right">0.5288405</td>
 </tr>
 <tr class="odd">
-<td align="right">7035</td>
+<td align="right">2</td>
 <td align="right">2003</td>
 <td align="right">0.4054795</td>
 <td align="right">0.1634865</td>
 <td align="right">0.5468322</td>
 </tr>
 <tr class="even">
-<td align="right">7035</td>
+<td align="right">2</td>
 <td align="right">2003</td>
 <td align="right">0.4082192</td>
 <td align="right">0.1703238</td>
 <td align="right">0.5650611</td>
 </tr>
 <tr class="odd">
-<td align="right">7035</td>
+<td align="right">2</td>
 <td align="right">2003</td>
 <td align="right">0.4109589</td>
 <td align="right">0.1773864</td>
@@ -2811,7 +2811,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <p>Three functions are used to model the NDVI times series to a double logistic curve, as described by Bischoff et al. (2012).</p>
 <p><span class="math display">\[fitted = \frac{1}{1 + e^ \frac{xmidS - t}{scalS}} - \frac{1}{1 + e^ \frac{xmidA - t}{scalA}}\]</span></p>
 <p>Two options from this point are available: fitting NDVI and calculating IRG for observed data only, or for the full year.</p>
-<p>To calculate for the every day of every year, specify <code>returns = &#39;models&#39;</code> in <code>model_params</code>, <code>observed = FALSE</code> in <code>model_ndvi</code> and assign the output of <code>model_ndvi</code>.</p>
+<p>To calculate for every day of every year, specify <code>returns = &#39;models&#39;</code> in <code>model_params</code>, <code>observed = FALSE</code> in <code>model_ndvi</code> and assign the output of <code>model_ndvi</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="co"># Guess starting parameters</span></a>
 <a class="sourceLine" id="cb7-2" title="2"><span class="kw">model_start</span>(ndvi, <span class="dt">id =</span> <span class="st">&#39;id&#39;</span>, <span class="dt">year =</span> <span class="st">&#39;yr&#39;</span>)</a>
 <a class="sourceLine" id="cb7-3" title="3"></a>
@@ -2852,24 +2852,6 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb9-3" title="3"></a>
 <a class="sourceLine" id="cb9-4" title="4"><span class="co"># or for observed data</span></a>
 <a class="sourceLine" id="cb9-5" title="5"><span class="kw">calc_irg</span>(ndvi)</a></code></pre></div>
-<!-- Visualizing
-We don't use raster methods on purpose to take advantage of `data.table` speed. If you want to visualize your results, make single graphs (see vignette-graphing TODO and maybe a raster graphing vignette TODO). 
-
--->
-<!-- 
-Use 
-
-`alloc.col(ndvi)`
-
-to ensure you have columns allocated 
-
-
-data.table by reference changes to DT
-except where DT is grown e.g.
-model_ndvi, calc_irg, irg
-
-then merge back the observed days
--->
 </div>
 
 
