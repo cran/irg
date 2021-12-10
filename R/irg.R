@@ -30,7 +30,7 @@
 #' library(data.table)
 #'
 #' # Read in example data
-#' ndvi <- fread(system.file("extdata", "ndvi.csv", package = "irg"))
+#' ndvi <- fread(system.file("extdata", "sampled-ndvi-MODIS-MOD13Q1.csv", package = "irg"))
 #'
 #' # Filter and scale NDVI time series
 #' filter_ndvi(ndvi)
@@ -55,42 +55,43 @@
 #'
 #' # Calculate IRG for each day of the year
 #' calc_irg(fit)
-calc_irg <-
-	function(DT,
-					 id = 'id',
-					 year = 'yr',
-					 scaled = TRUE) {
-		# NSE error
-		xmidS <- scalS <- irg <- NULL
+calc_irg <- function(DT,
+										 id = 'id',
+										 year = 'yr',
+										 scaled = TRUE) {
+	# NSE error
+	xmidS <- scalS <- irg <- NULL
 
-		check_truelength(DT)
-		check_col(DT, 'xmidS')
-		check_col(DT, 'scalS')
-		check_col(DT, 't')
+	check_truelength(DT)
 
-		if (any(unlist(DT[, lapply(.SD, function(x)
-			any(is.na(x)))]))) {
-			warning('NAs found in DT, IRG will be set to NA.')
-		}
+	chk::check_names(DT, 'xmidS')
+	chk::check_names(DT, 'scalS')
+	chk::check_names(DT, 't')
 
-		DT[, irg :=
-			 	(exp((t + xmidS) / scalS)) /
-			 	(2 * scalS * (exp(1) ^ ((t + xmidS) / scalS)) +
-			 	 	(scalS * (exp(1) ^ ((
-			 	 		2 * t
-			 	 	) / scalS))) +
-			 	 	(scalS * exp(1) ^ ((2 * xmidS) / scalS)))]
-
-		if (scaled) {
-			check_col(DT, id, 'id')
-			check_col(DT, year, 'year')
-
-			DT[, irg := (irg - min(irg)) / (max(irg) - min(irg)),
-				 by = c(id, year)]
-		}
-
-		return(DT)
+	if (any(unlist(DT[, lapply(.SD, function(x)
+		anyNA(x)), .SDcols = c('xmidS', 't', 'scalS')]))) {
+		warning('NAs found in DT, IRG will be set to NA.')
 	}
+
+	DT[, irg :=
+		 	(exp((t + xmidS) / scalS)) /
+		 	(2 * scalS * (exp(1) ^ ((t + xmidS) / scalS)) +
+		 	 	(scalS * (exp(1) ^ ((
+		 	 		2 * t
+		 	 	) / scalS))) +
+		 	 	(scalS * exp(1) ^ ((2 * xmidS) / scalS)))]
+
+	if (scaled) {
+		chk::check_names(DT, id)
+		chk::check_names(DT, year)
+
+		DT[!is.na(irg), irg :=
+			 	(irg - min(irg, na.rm = TRUE)) /
+			 	(max(irg, na.rm = TRUE) - min(irg, na.rm = TRUE)),
+			 by = c(id, year)]
+	}
+	return(DT)
+}
 
 
 
@@ -123,7 +124,7 @@ calc_irg <-
 #' library(data.table)
 #'
 #' # Read in example data
-#' ndvi <- fread(system.file("extdata", "ndvi.csv", package = "irg"))
+#' ndvi <- fread(system.file("extdata", "sampled-ndvi-MODIS-MOD13Q1.csv", package = "irg"))
 #'
 #' # Calculate IRG for each day of the year and individual
 #' out <- irg(ndvi)

@@ -4,8 +4,16 @@
 \alias{model_params}
 \title{Estimate model parameters}
 \usage{
-model_params(DT, returns = NULL, id = "id", year = "yr",
-  xmidS = NULL, xmidA = NULL, scalS = NULL, scalA = NULL)
+model_params(
+  DT,
+  returns = NULL,
+  id = "id",
+  year = "yr",
+  xmidS = NULL,
+  xmidA = NULL,
+  scalS = NULL,
+  scalA = NULL
+)
 }
 \arguments{
 \item{DT}{data.table of NDVI time series. Also optionally starting estimates. See Details.}
@@ -48,7 +56,7 @@ Formula and arguments \code{xmidS}, \code{xmidA}, \code{scalS}, \code{scalA} fol
 library(data.table)
 
 # Read in example data
-ndvi <- fread(system.file("extdata", "ndvi.csv", package = "irg"))
+ndvi <- fread(system.file("extdata", "sampled-ndvi-MODIS-MOD13Q1.csv", package = "irg"))
 
 # Filter and scale NDVI time series
 filter_ndvi(ndvi)
@@ -74,7 +82,8 @@ mods <- model_params(
 \url{https://www.journals.uchicago.edu/doi/abs/10.1086/667590}
 }
 \seealso{
-Other model: \code{\link{model_ndvi}},
-  \code{\link{model_start}}
+Other model: 
+\code{\link{model_ndvi}()},
+\code{\link{model_start}()}
 }
 \concept{model}

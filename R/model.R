@@ -20,7 +20,7 @@
 #' library(data.table)
 #'
 #' # Read in example data
-#' ndvi <- fread(system.file("extdata", "ndvi.csv", package = "irg"))
+#' ndvi <- fread(system.file("extdata", "sampled-ndvi-MODIS-MOD13Q1.csv", package = "irg"))
 #'
 #' # Filter and scale NDVI time series
 #' filter_ndvi(ndvi)
@@ -33,10 +33,10 @@ model_start <- function(DT, id = 'id', year = 'yr') {
 	# NSE errors
 	difS <- difA <- scaled <- xmidS_start <- xmidA_start <- NULL
 
-	check_col(DT, 'scaled', extra = ' - did you filter and scale?')
-	check_col(DT, 't', extra = ' - did you scale doy?')
-	check_col(DT, id, 'id')
-	check_col(DT, year, 'year')
+	chk::check_names(DT, 'scaled')
+	chk::check_names(DT, 't')
+	chk::check_names(DT, id)
+	chk::check_names(DT, year)
 
 	overwrite_col(DT, 'xmidS_start')
 	overwrite_col(DT, 'xmidA_start')
@@ -48,16 +48,15 @@ model_start <- function(DT, id = 'id', year = 'yr') {
 		 by = c(id, year)]
 
 	data.table::setkey(DT, 'scaled')
-	DT[difS > 0, xmidS_start := .SD[list(0.5), t, roll = 'nearest'],
+	DT[difS > 0, xmidS_start := .SD[list(0.5), t, roll = 'nearest'][[1]],
 		 by = c(id, year), .SDcols = c('scaled', 't')]
-	DT[difS < 0, xmidA_start := .SD[list(0.5), t, roll = 'nearest'],
+	DT[difS < 0, xmidA_start := .SD[list(0.5), t, roll = 'nearest'][[1]],
 		 by = c(id, year), .SDcols = c('scaled', 't')]
 
 	DT[, xmidS_start := .SD[!is.na(xmidS_start), xmidS_start[1]],
 		 by = c(id, year)]
 	DT[, xmidA_start := .SD[!is.na(xmidA_start), xmidA_start[1]],
 		 by = c(id, year)]
-
 
 	DT[xmidA_start < xmidS_start, xmidA_start := xmidA_start + 0.3]
 
@@ -109,7 +108,7 @@ model_start <- function(DT, id = 'id', year = 'yr') {
 #' library(data.table)
 #'
 #' # Read in example data
-#' ndvi <- fread(system.file("extdata", "ndvi.csv", package = "irg"))
+#' ndvi <- fread(system.file("extdata", "sampled-ndvi-MODIS-MOD13Q1.csv", package = "irg"))
 #'
 #' # Filter and scale NDVI time series
 #' filter_ndvi(ndvi)
@@ -143,30 +142,25 @@ model_params <- function(DT,
 
 	check_truelength(DT)
 
-	check_col(DT, 'scaled', extra = ' - did you filter and scale?')
+	chk::check_names(DT, 'scaled')
+	chk::check_names(DT, id)
+	chk::check_names(DT, year)
 
-	check_col(DT, id, 'id')
-	check_col(DT, year, 'year')
-
-	if (is.character(xmidS)) {
-		check_col(DT, xmidS, 'xmidS')
+	if (chk::vld_character(xmidS)) {
+		chk::check_names(DT, xmidS)
+	}
+	if (chk::vld_character(xmidA)) {
+		chk::check_names(DT, xmidA)
+	}
+	if (chk::vld_character(scalS)) {
+		chk::check_names(DT, scalS)
+	}
+	if (chk::vld_character(scalA)) {
+		chk::check_names(DT, scalA)
 	}
 
-	if (is.character(xmidA)) {
-		check_col(DT, xmidA, 'xmidA')
-	}
-
-	if (is.character(scalS)) {
-		check_col(DT, scalS, 'scalS')
-	}
-
-	if (is.character(scalA)) {
-		check_col(DT, scalA, 'scalA')
-	}
-
-	if (is.null(returns)) {
-		stop('argument "returns" is NULL, must provide one of "models" or "columns"')
-	}
+	chk::chk_not_null(returns)
+	chk::chk_subset(returns, c('models', 'columns'))
 
 	if (is.null(xmidS) | is.null(xmidA) | is.null(scalS) | is.null(scalA)) {
 		stop('starting parameters must be provided.
@@ -180,9 +174,8 @@ model_params <- function(DT,
 	comb <- unique(DT[, .SD, .SDcols = unlist(c(id, year, hasit))])
 	comb[, (names(doesnt)) := (doesnt)]
 	whichchar <- params[unlist(lapply(params, is.character))]
-	setnames(comb,
-					 c(id, year, unlist(whichchar)),
-					 c('id', 'yr', names(whichchar)))
+
+	if (length(whichchar) > 0) setnames(comb, unlist(whichchar), names(whichchar))
 
 	if (any(comb[, .(checkdup = .N > 1),
 							 by = c(id, year)]$checkdup)) {
@@ -191,28 +184,31 @@ model_params <- function(DT,
 	}
 
 	m <- mapply(function(i, y) {
-		tryCatch(
-			c(list(id = i, yr = y),
+		tryCatch({
+			key <- as.data.table(stats::setNames(list(i, y), c(id, year)))
+			c(stats::setNames(list(i, y), c(id, year)),
 				stats::coef(
 					stats::nls(
 						formula = scaled ~
 							(1 / (1 + exp((xmidS - t) / scalS))) -
 							(1 / (1 + exp((xmidA - t) / scalA))),
-						data = DT[id == i & yr == y],
+						data = DT[key, on = c(id, year)],
 						start = list(
-							xmidS = comb[id == i & yr == y, xmidS],
-							xmidA = comb[id == i & yr == y, xmidA],
-							scalS = comb[id == i & yr == y, scalS],
-							scalA = comb[id == i & yr == y, scalA]
+							xmidS = comb[key, on = c(id, year)][, xmidS],
+							xmidA = comb[key, on = c(id, year)][, xmidA],
+							scalS = comb[key, on = c(id, year)][, scalS],
+							scalA = comb[key, on = c(id, year)][, scalA]
 						)
 					)
-				)),
+				))},
 			error = function(e)
-				list(id = i, yr = y)
+				stats::setNames(list(i, y, e), c(id, year, 'nls_error')),
+			warning = function(w)
+				stats::setNames(list(i, y, w), c(id, year, 'warning'))
 		)
 	},
-	i = comb$id,
-	y = comb$yr,
+	i = comb[[id]],
+	y = comb[[year]],
 	SIMPLIFY = FALSE)
 
 	m <- data.table::rbindlist(m, fill = TRUE)
@@ -220,8 +216,6 @@ model_params <- function(DT,
 	if (returns == 'models') {
 		return(m)
 	} else if (returns == 'columns') {
-		setnames(m, c('id', 'yr'), c(id, year))
-
 		return(DT[m, c('xmidS', 'xmidA', 'scalS', 'scalA') :=
 								.(xmidS, xmidA, scalS, scalA),
 							on = c(id, year)])
@@ -255,7 +249,7 @@ model_params <- function(DT,
 #' library(data.table)
 #'
 #' # Read in example data
-#' ndvi <- fread(system.file("extdata", "ndvi.csv", package = "irg"))
+#' ndvi <- fread(system.file("extdata", "sampled-ndvi-MODIS-MOD13Q1.csv", package = "irg"))
 #'
 #' # Filter and scale NDVI time series
 #' filter_ndvi(ndvi)
@@ -302,10 +296,12 @@ model_ndvi <- function(DT, observed = TRUE) {
 
 	check_truelength(DT)
 
-	check_col(DT, 'xmidS')
-	check_col(DT, 'xmidA')
-	check_col(DT, 'scalS')
-	check_col(DT, 'scalA')
+	chk::check_names(DT, 'xmidS')
+	chk::check_names(DT, 'xmidA')
+	chk::check_names(DT, 'scalS')
+	chk::check_names(DT, 'scalA')
+
+	chk::chk_not_null(observed)
 
 	if (observed) {
 		DT[, fitted :=
@@ -320,7 +316,5 @@ model_ndvi <- function(DT, observed = TRUE) {
 						(1 / (1 + exp((xmidA - t) / scalA)))]
 
 		return(fitDT)
-	} else{
-		stop('missing observed - must be TRUE/FALSE')
 	}
 }

@@ -4,17 +4,22 @@
 \alias{filter_winter}
 \title{Filter winter NDVI}
 \usage{
-filter_winter(DT, probs = 0.025, limits = c(60L, 300L),
-  doy = "DayOfYear", id = "id")
+filter_winter(
+  DT,
+  probs = 0.025,
+  limits = c(60L, 300L),
+  doy = "DayOfYear",
+  id = "id"
+)
 }
 \arguments{
 \item{DT}{data.table of NDVI time series}
 
 \item{probs}{quantile probability to determine "winterNDVI". default is 0.025.}
 
-\item{limits}{integer vector indicating limit days of absolute winter (snow cover, etc.). default = 60 days after Jan 1 and 65 days before Jan 1.}
+\item{limits}{integer vector indicating limit days of absolute winter (snow cover, etc.). default is c(60, 300): 60 days after Jan 1 and 65 days before Jan 1.}
 
-\item{doy}{julian day column. default is 'DayOfYear'. integer type.}
+\item{doy}{julian day column. default is 'DayOfYear'.}
 
 \item{id}{id column. default is 'id'. See details.}
 }
@@ -32,13 +37,15 @@ The id argument is used to split between sampling units. This may be a point id,
 library(data.table)
 
 # Read example data
-ndvi <- fread(system.file("extdata", "ndvi.csv", package = "irg"))
-filter_qa(ndvi, qa = 'SummaryQA', good = c(0, 1))
+ndvi <- fread(system.file("extdata", "sampled-ndvi-MODIS-MOD13Q1.csv", package = "irg"))
+filter_qa(ndvi, ndvi = 'NDVI', qa = 'SummaryQA', good = c(0, 1))
 filter_winter(ndvi, probs = 0.025, limits = c(60L, 300L), doy = 'DayOfYear', id = 'id')
 }
 \seealso{
-Other filter: \code{\link{filter_ndvi}},
-  \code{\link{filter_qa}}, \code{\link{filter_roll}},
-  \code{\link{filter_top}}
+Other filter: 
+\code{\link{filter_ndvi}()},
+\code{\link{filter_qa}()},
+\code{\link{filter_roll}()},
+\code{\link{filter_top}()}
 }
 \concept{filter}

@@ -23,13 +23,14 @@ This functions expects the input \code{DT} is the output of previous four filter
 library(data.table)
 
 # Read in example data
-ndvi <- fread(system.file("extdata", "ndvi.csv", package = "irg"))
+ndvi <- fread(system.file("extdata", "sampled-ndvi-MODIS-MOD13Q1.csv", package = "irg"))
 
 # Filter and scale NDVI time series
 filter_ndvi(ndvi)
 scale_ndvi(ndvi)
 }
 \seealso{
-Other scale: \code{\link{scale_doy}}
+Other scale: 
+\code{\link{scale_doy}()}
 }
 \concept{scale}

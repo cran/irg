@@ -20,14 +20,16 @@ Meta function, calling all filtering steps, in order. Only defaults.
 library(data.table)
 
 # Read example data
-ndvi <- fread(system.file("extdata", "ndvi.csv", package = "irg"))
+ndvi <- fread(system.file("extdata", "sampled-ndvi-MODIS-MOD13Q1.csv", package = "irg"))
 
 # Use filter_ndvi to apply all filtering steps (with defaults)
 filter_ndvi(ndvi)
 }
 \seealso{
-Other filter: \code{\link{filter_qa}},
-  \code{\link{filter_roll}}, \code{\link{filter_top}},
-  \code{\link{filter_winter}}
+Other filter: 
+\code{\link{filter_qa}()},
+\code{\link{filter_roll}()},
+\code{\link{filter_top}()},
+\code{\link{filter_winter}()}
 }
 \concept{filter}

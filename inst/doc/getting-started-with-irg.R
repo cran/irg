@@ -1,4 +1,4 @@
-## ----knitrsetup, include = FALSE-----------------------------------------
+## ----knitrsetup, include = FALSE----------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = '#>',
@@ -6,29 +6,39 @@ knitr::opts_chunk$set(
 )
 options(scipen = 9999)
 
-## ----remotes-------------------------------------------------------------
-#  remotes::install_gitlab('robit.a/irg')
+## ---- eval = FALSE------------------------------------------------------------
+#  # Install
+#  install.packages('irg')
 
-## ----extdata, eval = TRUE------------------------------------------------
+## ---- eval = FALSE------------------------------------------------------------
+#  # Enable the robitalec universe
+#  options(repos = c(
+#      robitalec = 'https://robitalec.r-universe.dev',
+#      CRAN = 'https://cloud.r-project.org'))
+#  
+#  # Install
+#  install.packages('irg')
+
+## ----extdata, eval = TRUE-----------------------------------------------------
 library(irg)
 library(data.table)
 
-ndvi <- fread(system.file('extdata', 'ndvi.csv', package = 'irg'))
+ndvi <- fread(system.file('extdata', 'sampled-ndvi-MODIS-MOD13Q1.csv', package = 'irg'))
 
 # or look at the help page
 ?ndvi
 
-## ----printdata, eval = TRUE, echo = FALSE--------------------------------
+## ----printdata, eval = TRUE, echo = FALSE-------------------------------------
 knitr::kable(ndvi[90:95])
 
-## ----setdt---------------------------------------------------------------
+## ----setdt--------------------------------------------------------------------
 #  # Pretend
 #  DF <- as.data.frame(ndvi)
 #  
 #  # Convert by reference
 #  setDT(DF)
 
-## ----functGraphViz, eval = TRUE, echo = FALSE, self_contained = FALSE----
+## ----functGraphViz, eval = TRUE, echo = FALSE, self_contained = FALSE---------
 library(DiagrammeR)
 g <- grViz(
 	"
@@ -84,33 +94,33 @@ g <- grViz(
 	", width = 700, height = 600)
 g
 
-## ---- eval = TRUE, echo = FALSE------------------------------------------
+## ---- eval = TRUE, echo = FALSE-----------------------------------------------
 fs <-
 	data.table(functions = as.character(lsf.str('package:irg')))[, 
              arguments := paste(unlist(formalArgs(functions)), 
             									 collapse = ', ' ), 
              by = functions]
 
-## ---- eval = TRUE--------------------------------------------------------
+## ---- eval = TRUE-------------------------------------------------------------
 out <- irg(ndvi)
 
-## ---- eval = TRUE, echo = FALSE------------------------------------------
+## ---- eval = TRUE, echo = FALSE-----------------------------------------------
 knitr::kable(out[between(t, 0.4, 0.5)][1:5, .(id, yr, t, fitted, irg)])
 
-## ---- echo = FALSE, eval = TRUE------------------------------------------
+## ---- echo = FALSE, eval = TRUE-----------------------------------------------
 # fs[grepl('qa', functions), order := 1]
 # fs[grepl('winter', functions), order := 2]
 # fs[grepl('roll', functions), order := 3]
 # fs[grepl('top', functions), order := 4]
 knitr::kable(fs[grepl('filter', functions), .(functions, arguments)])
 
-## ---- eval = FALSE-------------------------------------------------------
+## ---- eval = FALSE------------------------------------------------------------
 #  # Load data.table
 #  library(data.table)
 #  library(irg)
 #  
 #  # Read in example data
-#  ndvi <- fread(system.file('extdata', 'ndvi.csv', package = 'irg'))
+#  ndvi <- fread(system.file('extdata', 'sampled-ndvi-MODIS-MOD13Q1.csv', package = 'irg'))
 #  
 #  # Filter NDVI time series
 #  filter_qa(ndvi, qa = 'SummaryQA', good = c(0, 1))
@@ -123,12 +133,12 @@ knitr::kable(fs[grepl('filter', functions), .(functions, arguments)])
 #  filter_top(ndvi, probs = 0.925, id = 'id')
 #  
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 #  # Scale variables
 #  scale_doy(ndvi, doy = 'DayOfYear')
 #  scale_ndvi(ndvi)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 #  # Guess starting parameters
 #  model_start(ndvi, id = 'id', year = 'yr')
 #  
@@ -145,7 +155,7 @@ knitr::kable(fs[grepl('filter', functions), .(functions, arguments)])
 #  # Fit double log to NDVI
 #  fit <- model_ndvi(mods, observed = FALSE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 #  # Guess starting parameters
 #  model_start(ndvi, id = 'id', year = 'yr')
 #  
@@ -160,9 +170,9 @@ knitr::kable(fs[grepl('filter', functions), .(functions, arguments)])
 #  )
 #  
 #  # Fit double log to NDVI
-#   model_ndvi(ndvi, observed = TRUE)
+#  model_ndvi(ndvi, observed = TRUE)
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 #  # Calculate IRG for each day of the year
 #  calc_irg(fit)
 #  

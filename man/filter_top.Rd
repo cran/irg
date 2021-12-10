@@ -27,16 +27,18 @@ The id argument is used to split between sampling units. This may be a point id,
 library(data.table)
 
 # Read example data
-ndvi <- fread(system.file("extdata", "ndvi.csv", package = "irg"))
+ndvi <- fread(system.file("extdata", "sampled-ndvi-MODIS-MOD13Q1.csv", package = "irg"))
 
-filter_qa(ndvi, qa = 'SummaryQA', good = c(0, 1))
+filter_qa(ndvi, ndvi = 'NDVI', qa = 'SummaryQA', good = c(0, 1))
 filter_winter(ndvi, probs = 0.025, limits = c(60L, 300L), doy = 'DayOfYear', id = 'id')
 filter_roll(ndvi, window = 3L, id = 'id')
 filter_top(ndvi, probs = 0.925, id = 'id')
 }
 \seealso{
-Other filter: \code{\link{filter_ndvi}},
-  \code{\link{filter_qa}}, \code{\link{filter_roll}},
-  \code{\link{filter_winter}}
+Other filter: 
+\code{\link{filter_ndvi}()},
+\code{\link{filter_qa}()},
+\code{\link{filter_roll}()},
+\code{\link{filter_winter}()}
 }
 \concept{filter}
